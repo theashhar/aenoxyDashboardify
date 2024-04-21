@@ -9,6 +9,7 @@ export default function PopupScreen({togglePopup, addStoryboardItem, storyBoardN
         addStoryboardItem()
         togglePopup()
         setStoryBoardName(storyBoardName)
+        setStoryBoardName('')
     };
 
   return (

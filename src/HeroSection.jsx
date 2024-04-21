@@ -1,11 +1,16 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { AiOutlineFolderOpen, AiOutlineMore, AiFillCaretDown, AiOutlinePlusCircle, AiOutlineEdit  } from "react-icons/ai";
+import { AiOutlineFolderOpen, AiOutlineMore, AiFillCaretDown, AiOutlinePlusCircle, AiOutlineEdit, AiFillCaretUp,   } from "react-icons/ai";
+import { MdDarkMode, MdLightMode  } from "react-icons/md";
+
 import UserIcon from './components/UserIcon';
 import PopupScreen from './components/PopupScreen';
 
 export default function HeroSection() {
   const [projectBoards, setProjectBoards] = useState([<ProjectBoard key={1} />]);
-
+  const [darkMode, setDarkMode] = useState(false)
+  const toggleDarkMode = () => {
+    setDarkMode(!darkMode)
+  }
   const addProjectBoard = () => {
     const newId = projectBoards.length + 1;
     const newProjectBoard = <ProjectBoard key={newId} />;
@@ -13,7 +18,17 @@ export default function HeroSection() {
   };
 
   return (
-    <div className='my-14 mx-10'>
+    <div className='my-14 mx-6 md:mx-10'>
+{/* 
+        {darkMode? (
+          
+          <MdDarkMode className='absolute bottom-5 right-10 drop-shadow' color='' size={40} onClick={toggleDarkMode} />
+        ) :(
+          
+          <MdLightMode className='absolute bottom-5 right-10 drop-shadow' color='' size={40} onClick={toggleDarkMode} />
+        )
+        } */}
+
       <div className='flex justify-between items-center my-14'>
         <div className='flex justify-center items-center'>
           <div className='h-8 w-8 md:h-10 md:w-10 mr-2'>
@@ -36,7 +51,12 @@ const ProjectBoard = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [projectName, setProjectName] = useState('Default Project');
   const projectNameRef = useRef(null);
+  const [storyBoardName, setStoryBoardName] = useState('');
+  const [isItemsVisible, setIsItemsVisible] = useState(true); // State to track visibility of StoryboardItems
 
+  const toggleItemsVisibility = () => {
+    setIsItemsVisible(!isItemsVisible);
+  };
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const togglePopup = () => {
     setIsPopupOpen(!isPopupOpen);
@@ -44,7 +64,7 @@ const ProjectBoard = () => {
 
   const addStoryboardItem = () => {
     const newId = storyboardItems.length + 1;
-    const newStoryboardItem = <StoryboardItem key={newId} />;
+    const newStoryboardItem = <StoryboardItem key={newId} storyBoardName={storyBoardName} />;
     setStoryboardItems([...storyboardItems, newStoryboardItem]);
   };
 
@@ -63,7 +83,7 @@ const ProjectBoard = () => {
   }, [isEditing]);
 
   return (
-    <div className='w-full h-full rounded-lg bg-white p-12 mb-10'>
+    <div className='w-full h-full rounded-lg bg-white py-8 px-4 lg:px-12 lg:py-12 mb-10'>
       <div className='flex items-start justify-between w-full '>
         <div className='flex '>
           <AiOutlineFolderOpen color='' size={40} />
@@ -90,38 +110,47 @@ const ProjectBoard = () => {
         </div>
         <div className='flex items-center justify-between w-20'>
           <AiOutlineMore color='' size={25} />
-          <AiFillCaretDown color='' size={25} />
+          {isItemsVisible? (
+
+            <AiFillCaretUp color='' size={25} onClick={toggleItemsVisibility} />
+          ): (
+            <AiFillCaretDown color='' size={25} onClick={toggleItemsVisibility} />
+
+          )}
         </div>
       </div>
       {/* board */}
-      <div className='flex flex-wrap w-full mt-6 justify-center sm:justify-center md:justify-normal'>
-        {storyboardItems}
-        <AddStoryboardItem
-         onClick={togglePopup}
-        //  onClick={addStoryboardItem}
+      {isItemsVisible && (
+        <div className='flex flex-wrap w-full mt-6 justify-center sm:justify-center md:justify-normal'>
+          {storyboardItems}
+          <AddStoryboardItem
+            onClick={togglePopup}
+          //  onClick={addStoryboardItem}
           />
-      </div>
+        </div>
+      )}
       {/* Popup  Section */}
       {isPopupOpen && (
-    <div className="fixed inset-0 z-50 overflow-hidden">
-        {/* Background overlay */}
-        <div className="absolute inset-0 bg-black bg-opacity-50 transition-opacity duration-300" onClick={togglePopup}></div>
-        {/* Popup */}
-        <PopupScreen togglePopup={togglePopup} addStoryboardItem={addStoryboardItem}  />
+        <div className="fixed inset-0 z-50 overflow-hidden">
+          {/* Background overlay */}
+          <div className="absolute inset-0 bg-black bg-opacity-50 transition-opacity duration-300" onClick={togglePopup}></div>
+          {/* Popup */}
+          <PopupScreen togglePopup={togglePopup} addStoryboardItem={addStoryboardItem} storyBoardName={storyBoardName} setStoryBoardName={setStoryBoardName} />
 
-    </div>
-)}
+        </div>
+      )}
 
     </div>
   );
 }
-const StoryboardItem = () => {
+
+const StoryboardItem = ({storyBoardName}) => {
   return(
-    <div className='w-11/12 md:w-1/2 xl:w-1/3 2xl:w-1/4 h-72 border-white border-8 '>
+    <div className='w-full md:w-1/2 xl:w-1/3 2xl:w-1/4 h-72 border-white border-8 '>
       <div className='w-full h-full bg-white border-gray-200 border-2 rounded-sm'>
         <img src='https://source.unsplash.com/random/?storyboard' alt='cover' className='object-cover h-3/4 w-full rounded-t-sm' />
         <div className='m-2'>
-          <h1 className='text-black text-base'>Ai Character demo</h1>
+          <h1 className='text-black text-base'>{storyBoardName==null && 'AI Character Demo'}{storyBoardName}</h1>
           <span className='text-gray-400 text-xs'>Updated 21 Mar 24</span>
         </div>
       </div>
@@ -131,7 +160,7 @@ const StoryboardItem = () => {
 
 const AddStoryboardItem = ({ onClick }) => {
   return (
-    <div className='w-11/12 md:w-1/2 xl:w-1/3 2xl:w-1/4 h-72 border-white border-8 '>
+    <div className='w-full md:w-1/2 xl:w-1/3 2xl:w-1/4 h-72 border-white border-8 '>
       <div className='w-full h-full flex justify-center items-center bg-customBg border-gray-200 border-2 rounded-sm cursor-pointer'
        onClick={onClick}>
         <AiOutlinePlusCircle color='#b6b6b6' size={40} />
