@@ -49,7 +49,7 @@ export default function Navbar() {
                 </div>
                 <h1 className='font-bold' >Quick Start</h1>
             </div>
-            <div className='h-10 w-10 md:h-12 md:w-12 mx-2'>
+            <div className='h-10 w-10 md:h-12 md:w-12 mr-2 ml-1'>
                 <UserIcon letter='A' />
             </div>
             <div className='h-12 w-10 ml-2 hidden bg-black rounded-l-full md:flex justify-center items-center'>
@@ -57,7 +57,7 @@ export default function Navbar() {
             </div>
 
 {/* sidebar */}
-<AiOutlineMenu className='md:hidden' color='' size={30} onClick={toggleSidebar} />
+<AiOutlineMenu className='md:hidden mr-2' color='' size={30} onClick={toggleSidebar} />
 
 {isSidebarOpen && (
     <div className="fixed inset-0 z-50 overflow-hidden">
